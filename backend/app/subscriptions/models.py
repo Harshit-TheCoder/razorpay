@@ -9,6 +9,9 @@ class Subscription(Base):
     merchant_id = Column(String, nullable=False)
     customer_id = Column(String, ForeignKey("customers.id"), nullable=False)
     razorpay_subscription_id = Column(String, nullable=True)
+    plan_id = Column(String, nullable=True)
+    next_billing_at = Column(String, nullable=True)
+    failure_count = Column(Integer, default=0)
     type = Column(String, nullable=True)
     status = Column(String, nullable=False)
 

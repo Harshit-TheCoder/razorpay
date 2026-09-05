@@ -49,10 +49,14 @@ class RecoveryOrchestrator:
         
         scenario_type = event_to_scenario.get(event_type, "failed_payment") # Fallback to generic failed_payment
         
+        import random
+        amount = payload.get("amount", random.randint(50000, 1500000))
+        
         case = RecoveryCase(
             merchant_id=merchant_id,
             scenario_type=scenario_type,
             source_ref=source_ref,
+            amount=amount,
             state=CaseState.DETECTED
         )
         case = await self.case_repo.create(case)

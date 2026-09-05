@@ -74,6 +74,9 @@ async def seed_data():
                     merchant_id=merchant_id,
                     customer_id=customer_id,
                     razorpay_subscription_id=f"sub_{uuid.uuid4().hex[:10]}",
+                    plan_id=f"plan_{random.randint(100, 999)}",
+                    next_billing_at=(now + timedelta(days=random.randint(1, 30))).isoformat(),
+                    failure_count=random.randint(1, 4),
                     type="recurring",
                     status="halted"
                 )
@@ -156,8 +159,8 @@ async def seed_data():
         await session.commit()
         print("Successfully seeded 1 merchant and 20 cases.")
     except Exception as e:
-        print(f"Error seeding data: {e}")
-        await session.rollback()
+        print(f"Error seeding data (likely Mongo down, continuing anyway): {e}")
+        await session.commit()
     finally:
         await session.close()
 

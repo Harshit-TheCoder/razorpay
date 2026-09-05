@@ -1,0 +1,61 @@
+# Razorpay AI Revenue Recovery Controller - Demo Video Script
+
+Here is a step-by-step guide on what to say and highlight as you navigate through each webpage in your demo video:
+
+--------------------------------------------------
+1. MAIN DASHBOARD (Home Page / Analytics)
+--------------------------------------------------
+What to show: The main screen with the metrics widgets (Revenue at Risk, Recovered, Recovery Rate, Unresolved Cases) and the charts.
+
+What to say:
+"Welcome to the AI Revenue Recovery Controller. This is our central merchant dashboard where we track the real-time financial impact of our AI agent.
+At the top, you can see our 'North Star' metrics. The system dynamically tracks how much revenue is currently 'At Risk' due to failed payments or abandoned checkouts, and exactly how much revenue the AI has successfully 'Recovered' for the merchant.
+Unlike traditional dashboards that just show you errors, this shows you ROI. Below, the charts give us a breakdown of cases over time and the success rate of our automated interventions."
+
+--------------------------------------------------
+2. CASES LIST (The "Cases" Tab)
+--------------------------------------------------
+What to show: The list/table of all recovery cases with their current Status badges (DETECTED, INVESTIGATING, CLOSED, etc.).
+
+What to say:
+"Moving over to the Cases tab, this is our live pipeline. Every time a Razorpay webhook fires for a failed payment, or our background job detects an anomaly, a new Case is born here. 
+You can see cases in various states. Instead of a human manually digging through payment logs, our asynchronous Saga State Machine automatically picks up these 'DETECTED' cases and assigns our LangGraph AI Agent to investigate them in the background."
+
+--------------------------------------------------
+3. CASE DETAIL VIEW (Clicking into a specific Case)
+--------------------------------------------------
+What to show: Click on a specific case ID to show its timeline, the customer details, and the "AI Agent Rationale".
+
+What to say:
+"Let's dive into a specific case. Here we get full explainability into the AI's thought process. 
+The agent doesn't just blindly retry a payment. It analyzes the specific 'error_code' from Razorpay, looks at the customer's history, and decides on a strategy. In the Agent Rationale section, you can see exactly why the AI chose its action—whether that was a silent backend Razorpay capture retry, or generating a personalized SMS with a fresh payment link for the customer.
+On the right, you can see the immutable Audit Trail, proving that our system is fully transparent and auditable for every state transition."
+
+--------------------------------------------------
+4. HUMAN REVIEW QUEUE (Escalations Tab)
+--------------------------------------------------
+What to show: The Escalations page showing blocked/pending cases, and click the "Resolve & Resume" button.
+
+What to say:
+"Now, what happens if the AI proposes something unsafe? This brings us to our most important feature for financial tech: Safety and Guardrails.
+Any action proposed by the AI must pass through our deterministic Policy Engine before touching the Razorpay API. If a case hits a strict guardrail—like exceeding the maximum retry limit—it gets blocked and sent to this Human Review Queue. 
+The LLM never gets unchecked control over money. A human merchant admin can review the edge-cases here, manually click 'Resolve & Resume', and the system updates the recovered revenue metrics instantly."
+
+--------------------------------------------------
+5. SUBSCRIPTIONS (Subscriptions Tab)
+--------------------------------------------------
+What to show: The Subscriptions page, showcasing the list of tracked recurring billing plans.
+
+What to say:
+"Finally, we have the Subscriptions tab. This is where the system tracks ongoing recurring revenue streams. 
+If a subscription enters a 'halted' state due to consecutive payment failures, it gets flagged here. Our AI automatically cross-references these halted subscriptions to generate bounded recovery interventions—like sending an updated mandate link to the customer—ensuring we prevent avoidable churn before the subscription is permanently cancelled."
+
+
+
+--------------------------------------------------
+(Optional) 6. BACKEND TERMINAL / LOGS
+--------------------------------------------------
+What to show: A quick flash of the backend terminal or the `notifications.log` file showing the background execution.
+
+What to say:
+"And running under the hood is our Python FastAPI backend, which handles all the complex Saga choreography, Razorpay API integrations, and idempotency locks ensuring we never accidentally double-charge a customer."

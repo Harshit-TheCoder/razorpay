@@ -6,6 +6,9 @@ class SubscriptionCreateDTO(BaseModel):
     merchant_id: str
     customer_id: str
     razorpay_subscription_id: Optional[str] = None
+    plan_id: Optional[str] = None
+    next_billing_at: Optional[str] = None
+    failure_count: int = 0
     type: Optional[str] = None
     status: str
 

@@ -1,8 +1,8 @@
-"""Initial sqlite
+"""Initial schema
 
-Revision ID: ab453a5050ff
+Revision ID: 0b47f6791bd2
 Revises: 
-Create Date: 2026-09-05 12:41:05.175912
+Create Date: 2026-09-05 18:20:15.147349
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'ab453a5050ff'
+revision: str = '0b47f6791bd2'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -46,12 +46,35 @@ def upgrade() -> None:
     sa.Column('policy_profile_id', sa.String(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('policies',
+    sa.Column('id', sa.String(), nullable=False),
+    sa.Column('merchant_id', sa.String(), nullable=False),
+    sa.Column('max_retries', sa.Integer(), nullable=True),
+    sa.Column('max_transaction_amount', sa.Integer(), nullable=True),
+    sa.Column('max_contacts', sa.Integer(), nullable=True),
+    sa.Column('recovery_window_days', sa.Integer(), nullable=True),
+    sa.Column('require_human_approval', sa.Boolean(), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('merchant_id')
+    )
     op.create_table('products',
     sa.Column('id', sa.String(), nullable=False),
     sa.Column('merchant_id', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('price', sa.String(), nullable=False),
     sa.Column('category', sa.String(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('recovery_cases',
+    sa.Column('id', sa.String(), nullable=False),
+    sa.Column('merchant_id', sa.String(), nullable=False),
+    sa.Column('scenario_type', sa.String(), nullable=False),
+    sa.Column('source_ref', sa.String(), nullable=False),
+    sa.Column('amount', sa.Integer(), nullable=True),
+    sa.Column('state', sa.String(), nullable=False),
+    sa.Column('opened_at', sa.DateTime(), nullable=True),
+    sa.Column('closed_at', sa.DateTime(), nullable=True),
+    sa.Column('audit_ref', sa.String(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('orders',
@@ -61,55 +84,6 @@ def upgrade() -> None:
     sa.Column('razorpay_order_id', sa.String(), nullable=True),
     sa.Column('status', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['customer_id'], ['customers.id'], ),
-    sa.ForeignKeyConstraint(['merchant_id'], ['merchants.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('recovery_cases',
-    sa.Column('id', sa.String(), nullable=False),
-    sa.Column('merchant_id', sa.String(), nullable=False),
-    sa.Column('scenario_type', sa.String(), nullable=False),
-    sa.Column('source_ref', sa.String(), nullable=False),
-    sa.Column('state', sa.String(), nullable=False),
-    sa.Column('opened_at', sa.DateTime(), nullable=True),
-    sa.Column('closed_at', sa.DateTime(), nullable=True),
-    sa.Column('audit_ref', sa.String(), nullable=True),
-    sa.ForeignKeyConstraint(['merchant_id'], ['merchants.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('subscriptions',
-    sa.Column('id', sa.String(), nullable=False),
-    sa.Column('merchant_id', sa.String(), nullable=False),
-    sa.Column('customer_id', sa.String(), nullable=False),
-    sa.Column('razorpay_subscription_id', sa.String(), nullable=True),
-    sa.Column('type', sa.String(), nullable=True),
-    sa.Column('status', sa.String(), nullable=False),
-    sa.ForeignKeyConstraint(['customer_id'], ['customers.id'], ),
-    sa.ForeignKeyConstraint(['merchant_id'], ['merchants.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('checkout_records',
-    sa.Column('id', sa.String(), nullable=False),
-    sa.Column('merchant_id', sa.String(), nullable=False),
-    sa.Column('customer_id', sa.String(), nullable=False),
-    sa.Column('order_id', sa.String(), nullable=True),
-    sa.Column('cart_snapshot', sa.JSON(), nullable=True),
-    sa.Column('status', sa.String(), nullable=False),
-    sa.ForeignKeyConstraint(['customer_id'], ['customers.id'], ),
-    sa.ForeignKeyConstraint(['merchant_id'], ['merchants.id'], ),
-    sa.ForeignKeyConstraint(['order_id'], ['orders.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('payments',
-    sa.Column('id', sa.String(), nullable=False),
-    sa.Column('merchant_id', sa.String(), nullable=False),
-    sa.Column('order_id', sa.String(), nullable=True),
-    sa.Column('razorpay_payment_id', sa.String(), nullable=True),
-    sa.Column('status', sa.String(), nullable=False),
-    sa.Column('error_code', sa.String(), nullable=True),
-    sa.Column('error_reason', sa.String(), nullable=True),
-    sa.Column('error_source', sa.String(), nullable=True),
-    sa.ForeignKeyConstraint(['merchant_id'], ['merchants.id'], ),
-    sa.ForeignKeyConstraint(['order_id'], ['orders.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('recovery_attempts',
@@ -122,6 +96,42 @@ def upgrade() -> None:
     sa.Column('result', sa.JSON(), nullable=True),
     sa.Column('version', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['case_id'], ['recovery_cases.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('subscriptions',
+    sa.Column('id', sa.String(), nullable=False),
+    sa.Column('merchant_id', sa.String(), nullable=False),
+    sa.Column('customer_id', sa.String(), nullable=False),
+    sa.Column('razorpay_subscription_id', sa.String(), nullable=True),
+    sa.Column('plan_id', sa.String(), nullable=True),
+    sa.Column('next_billing_at', sa.String(), nullable=True),
+    sa.Column('failure_count', sa.Integer(), nullable=True),
+    sa.Column('type', sa.String(), nullable=True),
+    sa.Column('status', sa.String(), nullable=False),
+    sa.ForeignKeyConstraint(['customer_id'], ['customers.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('checkout_records',
+    sa.Column('id', sa.String(), nullable=False),
+    sa.Column('merchant_id', sa.String(), nullable=False),
+    sa.Column('customer_id', sa.String(), nullable=False),
+    sa.Column('order_id', sa.String(), nullable=True),
+    sa.Column('cart_snapshot', sa.JSON(), nullable=True),
+    sa.Column('status', sa.String(), nullable=False),
+    sa.ForeignKeyConstraint(['customer_id'], ['customers.id'], ),
+    sa.ForeignKeyConstraint(['order_id'], ['orders.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('payments',
+    sa.Column('id', sa.String(), nullable=False),
+    sa.Column('merchant_id', sa.String(), nullable=False),
+    sa.Column('order_id', sa.String(), nullable=True),
+    sa.Column('razorpay_payment_id', sa.String(), nullable=True),
+    sa.Column('status', sa.String(), nullable=False),
+    sa.Column('error_code', sa.String(), nullable=True),
+    sa.Column('error_reason', sa.String(), nullable=True),
+    sa.Column('error_source', sa.String(), nullable=True),
+    sa.ForeignKeyConstraint(['order_id'], ['orders.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('subscription_charges',
@@ -140,13 +150,14 @@ def downgrade() -> None:
     """Downgrade schema."""
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table('subscription_charges')
-    op.drop_table('recovery_attempts')
     op.drop_table('payments')
     op.drop_table('checkout_records')
     op.drop_table('subscriptions')
-    op.drop_table('recovery_cases')
+    op.drop_table('recovery_attempts')
     op.drop_table('orders')
+    op.drop_table('recovery_cases')
     op.drop_table('products')
+    op.drop_table('policies')
     op.drop_table('merchants')
     op.drop_table('events')
     op.drop_table('customers')
