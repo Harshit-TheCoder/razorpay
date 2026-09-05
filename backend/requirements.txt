@@ -1,0 +1,49 @@
+# ---- Core ----
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+
+# ---- Database ----
+sqlalchemy
+alembic
+asyncpg
+psycopg2-binary
+
+# ---- Agent / LLM ----
+langgraph
+langchain-core
+openai                     # swap/add google-generativeai if using Gemini
+
+# ---- Razorpay ----
+razorpay
+httpx
+
+# ---- Background jobs (hackathon: APScheduler only, skip Celery/Redis) ----
+apscheduler
+
+# ---- Realtime (live agent activity feed) ----
+sse-starlette
+
+# ---- Auth ----
+python-jose[cryptography]
+passlib[bcrypt]
+
+# ---- Notifications (optional, add only if used) ----
+twilio
+sendgrid
+
+# ---- Utils ----
+tenacity
+structlog
+python-dotenv
+faker
+
+# ---- Testing ----
+pytest
+pytest-asyncio
+
+# ---- Additional Dependencies (from Planning) ----
+motor
+redis
+langchain-google-genai
